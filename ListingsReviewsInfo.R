@@ -6,7 +6,7 @@ library(esquisse)
 #DETERMINING NULL VALUES, OUTLIERS, QUARTILES, ETC.
 summary(listings)
 
-#GEERATE NEW TABLE FOR WRANGLING
+#GEERATE NEW DF FOR WRANGLING
 listings_cleaned <- listings |>
   #GETTING RID OF UNNECESSARY COLUMNS
   select(-c(name,host_profile_id,host_name,latitude,longitude,price,last_review,calculated_host_listings_count,license)) |>
@@ -21,7 +21,7 @@ listings_cleaned <- listings |>
   #FILTERING MINIMUM NIGHTS LESS THAN A YEAR FOR SKEWNESS CONTROL
   filter(minimum_nights<366)
 
-#CREATING NEW TABLE CONTANING ID AND REVIEW RATING
+#CREATING NEW DF CONTANING ID AND REVIEW RATING
 listing_reviews <- detailed.ny.listings |>
   select(id, review_scores_rating) |>
   mutate(review_scores_rating = as.numeric(trimws(review_scores_rating))) |>
@@ -31,11 +31,12 @@ listing_reviews <- detailed.ny.listings |>
 summary(listings_cleaned)
 colMeans(is.na(listings_cleaned)) * 100
 
-#COMBINING BOTH TABLES BY ID
+#COMBINING BOTH DFs BY ID
 combined_listings <- listings_cleaned |>
   mutate(id = as.numeric(id)) |>
   inner_join(listing_reviews |> mutate(id = as.numeric(id)), by = "id")
 
 
+write.csv(combined_listings, "ListingReviewsInfo(1).csv", row.names = FALSE)
 
 
