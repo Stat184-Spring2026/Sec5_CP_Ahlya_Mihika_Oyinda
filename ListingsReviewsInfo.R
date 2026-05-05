@@ -9,7 +9,7 @@ summary(listings)
 #GEERATE NEW DF FOR WRANGLING
 listings_cleaned <- listings |>
   #GETTING RID OF UNNECESSARY COLUMNS
-  select(-c(name,host_profile_id,host_name,latitude,longitude,price,last_review,calculated_host_listings_count,license)) |>
+  select(-c(name,host_profile_id,host_name,latitude,longitude,price,calculated_host_listings_count,license)) |>
   #DROPING NA'S
   drop_na(reviews_per_month, minimum_nights) |> 
   #FILTERING FOR AVAILABLE AIRBNBs
@@ -34,9 +34,29 @@ colMeans(is.na(listings_cleaned)) * 100
 #COMBINING BOTH DFs BY ID
 combined_listings <- listings_cleaned |>
   mutate(id = as.numeric(id)) |>
-  inner_join(listing_reviews |> mutate(id = as.numeric(id)), by = "id")
+  inner_join(listing_reviews |> mutate(id = as.numeric(id)), by = "id") |>
+  #SPLITTING LAST_REVIEW INTO SEPARATE YEAR, MONTH, AND DAY TO SEE HOW MANY GENERAL BOOKINGS PER MONTH
+  separate_wider_delim(
+    last_review,
+    delim = "-",
+    names = c("year", "month", "day")
+  ) |>
+  #REMOVING YEAR AND DAY TO ONLY FOCUS ON MONTH
+  select(-c(year,day)) |>
+  rename(
+    "last_month_booked" = "month"
+  ) |>
+  #MUTATE NUMERICAL MONTH VALUE INTO STRING VALUE (ex. January, February, etc)
+  mutate(last_month_booked = month.name[as.integer(last_month_booked)]) |>
+  #MAKE LEVELS OF EACH MONTH FOR DATA VISUALIZATION PURPOSES (CATEGORIES DO NOT TURN OUT ALPHABETICAL)
+  mutate(last_month_booked = factor(last_month_booked, levels = month.name))
+
+#DETERMINING NULL VALUES AND OUTLIERS, ETC.
+summary(combined_listings)
+colMeans(is.na(combined_listings)) * 100
 
 
 write.csv(combined_listings, "ListingReviewsInfo(1).csv", row.names = FALSE)
+
 
 
