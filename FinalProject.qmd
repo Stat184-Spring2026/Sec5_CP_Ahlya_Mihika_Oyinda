@@ -1,0 +1,90 @@
+---
+title: "NYC Airbnb Analysis"
+author: "Mihika Choudhary, Oyindamola Sanni, Ahlya Elmanzalawi"
+date: "2026-05-04"
+format: pdf
+editor: visual
+
+number-sections: true
+toc: true
+toc-depth: 4
+cap-location: top
+fig-align: center
+fig-pos: "htbp"
+
+code-annotations: below
+code-overflow: wrap
+
+pdf-engine: xelatex
+mainfont: "Times New Roman"
+monofont: "Courier New"
+
+fontsize: 11pt
+linestretch: 1.15
+
+latex-tinytex: true
+
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+# Introduction
+
+After Airbnb launched in 2008, it slowly began taking over the housing market in New York City, while also becoming a popular lodging option for tourists. Because New York City contains a large variety of neighborhoods and boroughs, we wanted to analyze different listing factors such as location, room type, availability, minimum nights, and ratings to determine which factors most strongly tied to Airbnb popularity.
+
+For our STAT 184 final project, we are analyzing NYC Airbnb listing data to better understand patterns in the Airbnb rental market to better understand what factors influence popular boroughs to rent in. Additionally, we want to determine the most popular booking seasons and draw conclusions from a tourist's perspective to ultimately recommend the best boroughs and seasons for a traveler to book an Airbnb in.
+
+Our main research question is: Which factors appear to influence Airbnb popularity in New York City, and how can these patterns help tourists decide which boroughs and seasons are best for booking an Airbnb?
+
+## Exploratory Data Perspective
+
+For this project, we took an exploratory data analysis approach because our main goal is to identify patterns in the NYC Airbnb rental market rather than just creating cause and effect relationships. To execute this approach, we prioritized analyzing trends, comparing groups, and generating possible explanations for the patterns we find. These results help us make informed recommendations about the best boroughs and seasons to book an Airbnb. Our goal throughout this approach is to identify correlation, not prove causation!
+
+## Datasets and Provenance 
+
+For our project, we used Airbnb listing data from Inside Airbnb’s New York City data page: \
+https://insideairbnb.com/new-york-city/. We used two raw CSV files from this source: the summary listings dataset and the detailed listings dataset. We then cleaned these files and combined them into our final dataset: 'LisitingReviewsInfo.csv'.
+
+### Primary Dataset: Listings.csv
+
+Our primary dataset throughout this project was `listings.csv` from https://insideairbnb.com/new-york-city/. It provided us with a table summarizing Airbnb listings in New York City, with 36,455 cases and 7 useful attributes for our analysis. Each case in this dataset represents one Airbnb listing. The dataset includes attrivutes about where the listing is located, what type of rental it is, how often it has been reviewed, how available it is, and what minimum stay is required to book.
+
+1\. **Boroughs**: We will use boroughs such as Manhattan, Brooklyn, Queens, the Bronx, or Staten Island to compare which boroughs attract the most tourists and have the most Airbnb activity. \
+\
+2. **Neighborhood**: We originally assumed boroughs and neighborhoods were relatively the same thing, but with more observation we realized specific neighborhoods lie within each borough. The dataset includes Harlem, Midtown, Hell’s Kitchen, Williamsburg, Long Island city, etc. Since tourists may choose where to stay based on other factors such as transportation, activities, and convenience this attribute helps us look even deeper.\
+\
+3. **Room type**: These attributes will help us decide what type of rentals tourists prefer, such as: apartments, penthouses, or private rooms.\
+\
+4. **Minimum night requirement**: This tells us the minimum number of nights a guest must book. Although the data within this attribute was initially shocking, we were able to connect it to recent New York City laws. \
+\
+5. **Number of reviews and Reviews per month**: These attributes help us understand listing activity, a listing with many reviews may be booked more often, although reviews are not a perfect measure of total bookings because not every guest leaves a review.\
+\
+6. **Availability 365**: This tells us how many days the listing is available over the next year. This was important to observe from a tourist standpoint because an area with many listings may not actually be easy to book if those listings have low availability.
+
+7\. **Last review**: This gives the date of the most recent review, and we use this attribute to create a new variable called \`last_month_booked\`, which helps us examine seasonal patterns in recent listing activity.
+
+### Secondary Dataset: Detailed NY Listings.csv
+
+We eventually decided to incorporate a more detailed data set to go along with our analysis. Our second dataset is `detailed ny listings.csv`, which also comes from Inside Airbnb’s New York City data page. This dataset contains more detailed information about each Airbnb listing, and later helped us draw more correlations throughout our project.
+
+For our project, we mainly used this dataset to get each listing’s overall guest rating, stored as `review_scores_rating`. The main `listings.csv` file already included review activity information, such as `number_of_reviews`, `last_review`, and `reviews_per_month`, but it did not include the actual star ratings from guests.\
+\
+To gather this information, we joined this rating data with our cleaned listings dataset using the shared `id` column. This gave us one final dataset that included both general listing information and guest rating information which helped strengthen our hypotheses and broaden our analysis.
+
+## Wrangling Process:
+
+To begin the wrangling process, our team loaded the `dplyr` and `tidyverse` packages so we could clean, filter, and organize the data more efficiently. Before making any changes, we first ran a summary of the original `listings.csv` dataset to get a general understanding of the data, including missing values, possible outliers, and the types of variables we were working with.\
+\
+After reviewing the dataset, we noticed that several columns were not necessary for our analysis. Since our project focuses on Airbnb popularity, availability, reviews, ratings, and booking patterns, we removed columns such as `name`, `host_profile_id`, `host_name`, `latitude`, `longitude`, `price`, `calculated_host_listings_count`, and `license`. This us helped narrow down the dataset to the attributes that were most relevant to our research question.\
+\
+Next, we cleaned the remaining data by removing rows with missing values in important columns, especially `minimum_nights` and `reviews_per_month`. We also wanted to focus on listings that were realistically available to book, so we filtered out listings where `minimum_nights` was 0 or `availability_365` was 0. Since our analysis focuses on the main Airbnb rental types, we removed shared rooms and hotel rooms to avoid skewing the results with room types that were not central to our project.\
+\
+We also noticed outliers in the `minimum_nights` column, with some listings requiring stays longer than 365 days. Since those extreme values could heavily skew our results, we filtered them out and kept listings with minimum-night requirements under one year. Many listings still had minimum stays around 30 nights.\
+\
+The original `listings.csv` dataset already included review activity variables, such as `number_of_reviews`, `last_review`, and `reviews_per_month`, but it did not include the overall rating score for each listing. To add this information, our team used the detailed listings dataset from Inside Airbnb. We wrangled this file by keeping only the two columns we needed: `id` and `review_scores_rating`. Finally, we were able to join the rating data with our cleaned listings dataset using the shared \`id\` column. Listings without a rating were removed so that our final dataset would include usable rating information.\
+\
+Finally, we transformed the `last_review` column by separating it into year, month, and day. Since our project also looks at popular booking seasons, we kept the month and removed the day and year. We renamed this new variable `last_month_booked` so it would be easier to interpret in our visualizations. After creating the final combined dataset, we ran another summary to check that the data was cleaned and ready for analysis. We also included comments throughout the code so that the wrangling process would be understandable and reusable.
+
+### 
