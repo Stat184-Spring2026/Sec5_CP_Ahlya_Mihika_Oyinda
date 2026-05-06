@@ -114,11 +114,64 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(knitr)
+library(kableExtra)
 
 listings <- read.csv("listings.csv")
 detailed.ny.listings <- read.csv("detailed ny listings.csv")
 ListingReviewsInfo <- read.csv("ListingReviewsInfo.csv")
 ```
+
+## Summary Table by Borough
+
+Before analyzing individual statistics, we first summarized important Airbnb listing characteristics by borough. This table allows us to see the exacrt number of listings, average reviews per month, average review score, average availability, and average minimum night requirement. Examining these exact numbers gave us a general idea regarding each borough based on both popularity and tourist preferences.
+
+```{r}
+#| label: tbl-borough-summary
+#| tbl-cap: "Summary Statistics by NYC Borough for Airbnb Listings"
+#| results: asis
+
+borough_summary <- ListingReviewsInfo |>
+  group_by(neighbourhood_group) |>
+  summarise(
+    `Listings (n)` = n(),
+    `Avg Reviews/Month` = round(mean(reviews_per_month, na.rm = TRUE), 2),
+    `Avg Review Score` = round(mean(review_scores_rating, na.rm = TRUE), 2),
+    `Avg Availability (days)` = round(mean(availability_365, na.rm = TRUE), 0),
+    `Avg Min. Nights` = round(mean(minimum_nights, na.rm = TRUE), 1),
+    .groups = "drop"
+  ) |>
+  arrange(desc(`Avg Reviews/Month`)) |>
+  rename(Borough = neighbourhood_group)
+
+cat("\\begin{center}\n")
+
+borough_summary |>
+  kable(
+    format = "latex",
+    booktabs = TRUE,
+    align = "c"
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position", "striped", "scale_down"),
+    full_width = FALSE
+  )
+
+cat("\\end{center}\n")
+```
+
+**Alt Text**: Table showing borough-level Airbnb statistics for Queens, Brooklyn, Manhattan, the Bronx, and Staten Island, including listing count, average reviews per month, average rating, average availability, and average minimum-night stay. **\*Written with assistance from ChatGPT, GPT-5.5 Thinking, on May 6, 2026.\***
+
+## Statistical Analysis:
+
+Table 1 summarizes our chosen attributes for Airbnb listings per borough. Strictly based on numbers, we can see that Manhattan has the most amount of listings at 5240, and Brooklyn comes in second place with 4762 listings. Manhattan and Brooklyn seem to be dominating the Airbnb market which is likely due to the tourist attractions, restaurants, scenery, and popular stores they offer. However, Queens has the highest review activity at 1.07 reviews per month, followed closely by Brooklyn at 1.06 and Manhattan at 1.04. This suggests that Queens listings may be slightly more active, even though Queens has fewer listings than Manhattan and Brooklyn.
+
+### Long Description:
+
+This table compares five Airbnb listing measures across NYC boroughs. Manhattan and Brooklyn stand out for having the largest number of listings, which suggests that tourists have the most Airbnb options in those boroughs. Queens, however, has the highest average reviews per month, meaning its listings show slightly stronger review activity even though it has fewer total listings than Manhattan and Brooklyn. Staten Island has the highest average review score and the highest average availability, but it also has the smallest number of listings, so its results should be interpreted with caution. The Bronx also has high availability compared to the larger boroughs, which may suggest that listings there are easier to find but possibly less in demand. Across all boroughs, the average minimum-night requirement is high, ranging from about 25 nights to about 30 nights, showing that many listings may be less practical for short tourist stays. Overall, the table shows that no single borough is strongest in every category, so tourist recommendations should consider listing count, review activity, ratings, availability, and minimum-night requirements together. **\*Written with assistance from ChatGPT, GPT-5.5 Thinking, on May 6, 2026.\***
+
+## Median Minimum Booking Nights by Borough
+
+After we successfully summarized our borough statistics, we were quite confused seeing the average minimum booking night requirement per listing. We created a visualization to get a better idea on what each listing requires as minimum night booking on average.
 
 ```{r}
 #| fig-cap: "Figure 1: Median Minimum Booking Nights by Borough"
@@ -147,3 +200,74 @@ minimum_nights_by_borough |>
   theme_minimal() +
   theme(legend.position = "none")
 ```
+
+**Alt Text**: Bar chart showing the median minimum booking nights for Airbnb listings across the Bronx, Brooklyn, Manhattan, Queens, and Staten Island. Each borough has the same median minimum stay of 30 nights. **\*Written with assistance from ChatGPT, GPT-5.5 Thinking, on May 6, 2026.\***
+
+## Statistical Analysis:
+
+Observing the bar graph, we can see that median minimum booking requirement is 30 nights across every borough. At first, this month long requirement seemed unusual, especially from a tourist’s perspective, since many visitors usually look for shorter stays. We were later able to connect this to a recent New York City law. New York City adopted Local Law 18 back in September 2023. This law is also known as the "Short-term Rental Registration Law". Local Law 18 placed restrictions on Airbnb hosts providing short term stays in their listings, meaning they would have to register with the Mayor's Office of Special Enforcement if they wanted to offer rental stays under 30 consecutive days. We can assume many hosts may now choose to set their minimum stay at 30 nights to avoid the additional registration process to offer short term stays to their guests. An insight we had throughout this analysis was that short term visits to New York City may not be realistic for travelers through Airbnb, and they may choose to book a hotel instead. Although our data does not intend to prove that this law directly caused the 30 night minimum requirement, it provides us with a strong possible explanation for why this pattern seems to appears across our entire dataset.
+
+### Long Description:
+
+This bar chart compares the median minimum booking-night requirement across all five New York City boroughs. The x-axis lists the Bronx, Brooklyn, Manhattan, Queens, and Staten Island, while the y-axis shows median minimum booking nights from 0 to 50. Each borough has a bar reaching 30 nights, meaning the typical listing in every borough requires a minimum stay of about one month. This is an important pattern because it shows that minimum-night requirements are consistent across boroughs rather than being limited to one specific area. From a tourist standpoint, this may make many Airbnb listings less practical for short trips, since travelers visiting for only a few days or a week would not be able to book listings with a 30-night minimum. Overall, the graph suggests that tourists may need to pay close attention to minimum-night requirements when deciding where to book, because this restriction appears across all boroughs in the dataset. **\*Written with assistance from ChatGPT, GPT-5.5 Thinking, on May 6, 2026.\***
+
+## Listing Popularity by Borough
+
+Our Figure 2 visualization compares listing popularity by borough using average reviews per month. Since our dataset did not include the exact number of bookings, we used reviews per month as a helpful substitution to determine how active Airbnb listings are in each borough.
+
+```{r}
+borough_pop <- ListingReviewsInfo |>
+  group_by(neighbourhood_group) |>
+  summarise(avg_reviews_pm = mean(reviews_per_month, na.rm = TRUE)) |>
+  mutate(neighbourhood_group = fct_reorder(neighbourhood_group, avg_reviews_pm))
+
+plot1 <- ggplot(borough_pop, aes(x = neighbourhood_group,
+                                 y = avg_reviews_pm,
+                                 fill = neighbourhood_group)) +
+  geom_col(show.legend = FALSE, width = 0.6) +
+  geom_text(aes(label = round(avg_reviews_pm, 2)),
+            vjust = -0.5, size = 4, fontface = "bold") +
+  scale_fill_manual(values = c(
+    "Staten Island" = "#8ecae6",
+    "Bronx"         = "#219ebc",
+    "Manhattan"     = "#023047",
+    "Brooklyn"      = "#ffb703",
+    "Queens"        = "#fb8500"
+  )) +
+  scale_y_continuous(
+    limits = c(0.7, 1.2),
+    oob    = scales::squish
+  ) +
+  labs(
+    title    = "Listing Popularity by NYC Borough",
+    subtitle = "Measured by average number of reviews per month",
+    x        = "Borough",
+    y        = "Average Reviews per Month",
+    caption  = "Source: NYC Airbnb listings dataset"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title         = element_text(face = "bold", size = 14),
+    plot.subtitle      = element_text(color = "gray40", size = 11),
+    plot.caption       = element_text(color = "gray50", size = 9),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor   = element_blank(),
+    axis.text.x        = element_text(size = 11)
+  )
+
+plot1
+```
+
+**Alt Text**: Bar chart comparing average reviews per month for Airbnb listings across Staten Island, the Bronx, Manhattan, Brooklyn, and Queens. Queens has the highest average reviews per month at 1.07, followed by Brooklyn at 1.06 and Manhattan at 1.04. The Bronx and Staten Island have lower averages at 0.86 and 0.85. ***Written with assistance from ChatGPT, GPT-5.5 Thinking, on May 6, 2026.***
+
+## Statistical Analysis:
+
+Based on the graph, we were able to get a visual idea of listing popularity across New York City. Queens has the highest average review activity at 1.07 reviews per month, with Brooklyn close behind at 1.06 and Manhattan at 1.04. The Bronx and Staten Island are somewhat lower, showing Bronx at 0.86 and Staten Island at 0.85.
+
+This visualization suggests that Queens, Brooklyn, and Manhattan may have more active Airbnb listings compared to the Bronx and Staten Island. However, the top three most reviewed boroughs (Queens, Brooklyn, and Manhattan) contain extremely small differences, so we can't confidently say that this category necessarily shows us the most popular borough. From a tourist’s perspective, these three boroughs seem like the best booking options because their listings are reviewed most often and that could likely provide a sense of reassurance prior to booking. The Bronx and Staten Island may still be good options depending on the traveler's needs, but their lower review activity suggests they may not be as popular or active in the Airbnb market.
+
+### 
+
+### Long Description:
+
+This bar chart shows average Airbnb reviews per month by New York City borough. The x-axis lists Staten Island, the Bronx, Manhattan, Brooklyn, and Queens, while the y-axis shows average reviews per month from 0.7 to 1.2. Queens has the tallest bar at 1.07 reviews per month, with Brooklyn close behind at 1.06 and Manhattan at 1.04. The Bronx and Staten Island have shorter bars, at 0.86 and 0.85 reviews per month. The chart suggests that Queens, Brooklyn, and Manhattan have higher review activity than the Bronx and Staten Island. Since reviews per month are being used as a proxy for listing activity, this graph helps compare which boroughs may have more frequently used Airbnb listings. However, the y-axis starts at 0.7, so the visual difference between boroughs may appear larger than the numerical difference actually is. ***Written with assistance from ChatGPT, GPT-5.5 Thinking, on May 6, 2026.***
