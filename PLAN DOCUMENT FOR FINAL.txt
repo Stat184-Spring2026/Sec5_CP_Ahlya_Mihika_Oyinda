@@ -1,0 +1,45 @@
+﻿PLAN DOCUMENT FOR FINAL PROJECT:
+
+
+Overview:
+
+Our plan for this final project is to develop a hypothesis on the best areas to rent NYC AirBNBs. We will be analyzing what trends affect popularity and business for these listings.
+
+Goal(s):
+
+We aim to identify correlations between variables such as neighborhood, room type, number of reviews, and minimum nights to determine which factors most strongly impact Airbnbs. We plan to take these insights to develop hypothesis on the best areas to rent. We are aiming to display these correlations as data visuals, and document our findings
+
+
+PROJECT PLAN:
+
+1. Brainstorm topics/Locate datasets- We sought to analyze the AirBNB listings, especially in NYC, because we are fond of the area and attune to trends and politics that may occur there. Through this brainstorming, we were able to locate our datasets on the “insideAirBNB” website to work with.
+
+2. Establish our goal- We have established our goal above, which is to identify any correlations and trends by using various attributes like neighborhood, room type, number of reviews, rating, time of year, and minimum nights. We will use these insights to draw conclusions about these trends.
+
+3. Wrangle our data- Our goal is to wrangle the data to prep it for developing data visualizations. We will decide which attributes in the raw data are useful or not, and act accordingly. We will perform EDA on this dataset, and determine any outliers or null values that may affect our results. Finally, we will clean our code and code comments for reusability and transparency purposes. We will commit these changes to our repo.
+
+4. Develop data visualizations- We will develop any data visualizations of correlations we find, such as popularity of room type, most common neighborhoods, and most popular seasons. We polish these visuals, and develop alt text and long descriptions for each visual. Finally, we will upload our code and visuals to our repo, so that they are easy access for our Quarto file.
+
+5. Develop hypothesis- We will analyze our findings and develop a conclusion/hypothesis on our original goal. We will state which boroughs we think will be best for renting, as well as the type of AirBNB and the time of year to rent. We will then share our hypothesis on our Quarto file.
+
+6. Develop Quarto file- We will compile all of our findings into a single document. We will address our goals, datasets involved, how we follow open science principles, and our conclusions. We will polish our file, and submit it for grading.
+
+
+REPO PLAN:
+
+1. Create a repo- We will create a repo for our project. The owner of this repo will be our class, and each member will have our own dev branches.
+
+2. Create README- We will create a README for this repo, which explains what this repo is about, our goals, and our objectives.
+
+3. Uploading to repo- We will use this repo as a way to upload files for our group to use. We aim to have at least 5 commits per member, ensuring each member pulls their weight. 
+
+4. Addressing issues- We will document any issues we come across, such as incomplete code, or serve as reminders. By the end of our project, we aim for every issue to be closed.
+
+
+COMMUNICATION PLAN:
+
+1. We will create an iMessage group chat containing every group member. We will consistently use this chat to stay updated on everyone’s process.
+
+2. We will assign roles (each role can be changed at any time)    to each person, ensuring that everyone has an equal workload. We will communicate about each other’s schedules and deadlines, and compromise.
+
+3. If needed, we will reach out to our instructor for any questions we may have.
