@@ -87,4 +87,63 @@ The original `listings.csv` dataset already included review activity variables, 
 \
 Finally, we transformed the `last_review` column by separating it into year, month, and day. Since our project also looks at popular booking seasons, we kept the month and removed the day and year. We renamed this new variable `last_month_booked` so it would be easier to interpret in our visualizations. After creating the final combined dataset, we ran another summary to check that the data was cleaned and ready for analysis. We also included comments throughout the code so that the wrangling process would be understandable and reusable.
 
-### 
+## F.A.I.R and C.A.R.E Principles:
+
+### **FAIR:**
+
+**Findable**: Both our primary and secondary sources were found on the insideairbnb website. This site is the official data website for AirBNB, making this source reputable.
+
+**Accessible**: Both of our sources were free to use. There was nothing that prevented us from downloading these sources.
+
+**Interoperable**: Our data files were both .csv, which is a widely used format. We were able to easily import our data to start wrangling. Our primary data source had been slightly wrangled by data experts, making the data easy to understand through column names, etc.
+
+**Reusable:** Our wrangled data contains clear and concise comments for readability. This way, another person reading the data can understand and recreate our project.
+
+### **CARE:**
+
+**Collective Benefit:** Our conclusions help renters make decisions while renting in NYC. It is informational and helpful to the collective, and can be utilized to their advantage.
+
+**Authority to Control:** Our data does not violate any property rights, nor does it use highly sensitive information. Our primary dataset did not have price included, which can be linked to privacy reasons.
+
+**Responsibility:** This data has no bias towards any outcome. All sources have been cited.
+
+**Ethics:** Our data does not promote any form of harm, nor does it exploit others. No person is harmed, no laws are broken, and our findings are morally sound. This data can be used for future use.
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+listings <- read.csv("listings.csv")
+detailed.ny.listings <- read.csv("detailed ny listings.csv")
+ListingReviewsInfo <- read.csv("ListingReviewsInfo.csv")
+```
+
+```{r}
+#| fig-cap: "Figure 1: Median Minimum Booking Nights by Borough"
+#| fig-alt: "Bar chart showing median minimum booking nights for Airbnb listings across New York City boroughs. Boroughs are on the x-axis, median minimum booking nights are on the y-axis, and the y-axis ranges from 0 to 50 nights."
+
+minimum_nights_by_borough <- ListingReviewsInfo |>
+  group_by(neighbourhood_group) |>
+  summarize(
+    median_minimum_nights = median(minimum_nights, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+minimum_nights_by_borough |>
+  ggplot(aes(
+    x = reorder(neighbourhood_group, -median_minimum_nights),
+    y = median_minimum_nights,
+    fill = neighbourhood_group
+  )) +
+  geom_col() +
+  scale_y_continuous(limits = c(0, 50)) +
+  labs(
+    title = "Median Minimum Booking Nights by Borough",
+    x = "Borough",
+    y = "Median Minimum Booking Nights"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
