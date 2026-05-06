@@ -42,22 +42,22 @@ Our main research question is: Which factors appear to influence Airbnb populari
 
 For this project, we took an exploratory data analysis approach because our main goal is to identify patterns in the NYC Airbnb rental market rather than just creating cause and effect relationships. To execute this approach, we prioritized analyzing trends, comparing groups, and generating possible explanations for the patterns we find. These results help us make informed recommendations about the best boroughs and seasons to book an Airbnb. Our goal throughout this approach is to identify correlation, not prove causation!
 
-## Datasets and Provenance 
+## Datasets and Provenance
 
-For our project, we used Airbnb listing data from Inside Airbnb’s New York City data page: \
+For our project, we used Airbnb listing data from Inside Airbnb’s New York City data page:\
 https://insideairbnb.com/new-york-city/. We used two raw CSV files from this source: the summary listings dataset and the detailed listings dataset. We then cleaned these files and combined them into our final dataset: 'LisitingReviewsInfo.csv'.
 
 ### Primary Dataset: Listings.csv
 
 Our primary dataset throughout this project was `listings.csv` from https://insideairbnb.com/new-york-city/. It provided us with a table summarizing Airbnb listings in New York City, with 36,455 cases and 7 useful attributes for our analysis. Each case in this dataset represents one Airbnb listing. The dataset includes attrivutes about where the listing is located, what type of rental it is, how often it has been reviewed, how available it is, and what minimum stay is required to book.
 
-1\. **Boroughs**: We will use boroughs such as Manhattan, Brooklyn, Queens, the Bronx, or Staten Island to compare which boroughs attract the most tourists and have the most Airbnb activity. \
+1\. **Boroughs**: We will use boroughs such as Manhattan, Brooklyn, Queens, the Bronx, or Staten Island to compare which boroughs attract the most tourists and have the most Airbnb activity.\
 \
 2. **Neighborhood**: We originally assumed boroughs and neighborhoods were relatively the same thing, but with more observation we realized specific neighborhoods lie within each borough. The dataset includes Harlem, Midtown, Hell’s Kitchen, Williamsburg, Long Island city, etc. Since tourists may choose where to stay based on other factors such as transportation, activities, and convenience this attribute helps us look even deeper.\
 \
 3. **Room type**: These attributes will help us decide what type of rentals tourists prefer, such as: apartments, penthouses, or private rooms.\
 \
-4. **Minimum night requirement**: This tells us the minimum number of nights a guest must book. Although the data within this attribute was initially shocking, we were able to connect it to recent New York City laws. \
+4. **Minimum night requirement**: This tells us the minimum number of nights a guest must book. Although the data within this attribute was initially shocking, we were able to connect it to recent New York City laws.\
 \
 5. **Number of reviews and Reviews per month**: These attributes help us understand listing activity, a listing with many reviews may be booked more often, although reviews are not a perfect measure of total bookings because not every guest leaves a review.\
 \
