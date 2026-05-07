@@ -21,7 +21,7 @@ Our current plan is to finalize our data visualizations and compile all findings
 
 ## Repo Structure
 
-Use this section to explain the structure of your repo. This should help visitors quickly figure out where they should look to find certain elements. Further, you can use this space to highlight and briefly explain important/key files in the repo.
+This repo has a main branch, and three dev branches. Each dev branch contains the name of the owner. Each branch is where each person will make their commits. This readme is to provide the general structure of the assignment.
 
 
 ## Authors
